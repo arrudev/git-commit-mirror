@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# 1. Trava de segurança para evitar Loop Infinito
+if [ "$MIRROR_IS_RUNNING" == "1" ]; then
+    exit 0
+fi
+
+# 2. CONFIGURAÇÃO: Caminho absoluto do seu repositório de perfil
+# IMPORTANTE: Use o formato do Git Bash (/c/Users/...)
+PROFILE_REPO="/c/Users/USUARIO_WINDOWS/Documents/SEU_USUARIO"
+
+# 3. Execução em segundo plano (background)
+(
+    cd "$PROFILE_REPO" || exit
+    CURRENT_DATE=$(date +'%Y-%m-%d %H:%M:%S')
+
+    # Realiza o commit injetando a trava de segurança
+    MIRROR_IS_RUNNING=1 git commit --allow-empty -m "mirror: atividade detectada - $CURRENT_DATE"
+
+    # Push silencioso
+    git push origin main > /dev/null 2>&1
+) &
